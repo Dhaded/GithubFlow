@@ -1,9 +1,9 @@
-name: Deploy to GitHub Pages
+name: Test GitHub Pages Deploy
 
 on:
   push:
     branches:
-      - main  # Or your default branch
+      - main  # or your default branch
 
 permissions:
   contents: read
@@ -18,21 +18,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18  # Your Node.js version
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      - name: Upload artifact
+      - name: Upload static site
         uses: actions/upload-pages-artifact@v2
         with:
-          path: ./build  # Replace with dist, out, etc. as needed
+          path: ./public  # Make sure this folder exists with index.html
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v2
