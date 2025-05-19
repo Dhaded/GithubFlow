@@ -1,27 +1,10 @@
-name: Test GitHub Pages Deploy
+name: Simple Test
 
-on:
-  push:
-    branches:
-      - main  # or your default branch
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+on: [push]
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Upload static site
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: ./public  # Make sure this folder exists with index.html
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v2
+      - uses: actions/checkout@v3
+      - run: echo "Hello from GitHub Actions!"
