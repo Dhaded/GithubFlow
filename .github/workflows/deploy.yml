@@ -41,6 +41,7 @@ jobs:
       - name: Mark deployment status as pending
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           deployment_id=${{ steps.create_deployment.outputs.deployment_id }}
 
@@ -48,7 +49,11 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/deployments/$deployment_id/statuses \
-            -d '{"state":"pending"}'
+            -d "$(jq -n \
+                  --arg state "pending" \
+                  --arg target_url "$TARGET_URL" \
+                  --arg description "Deployment started" \
+                  '{"state":$state, "target_url":$target_url, "description":$description}')"
 
       - name: Run deployment steps
         run: |
@@ -58,6 +63,7 @@ jobs:
       - name: Mark deployment status as success
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           deployment_id=${{ steps.create_deployment.outputs.deployment_id }}
 
@@ -65,4 +71,8 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/deployments/$deployment_id/statuses \
-            -d '{"state":"success"}'
+            -d "$(jq -n \
+                  --arg state "success" \
+                  --arg target_url "$TARGET_URL" \
+                  --arg description "Deployment completed successfully" \
+                  '{"state":$state, "target_url":$target_url, "description":$description}')"
